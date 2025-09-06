@@ -1,6 +1,6 @@
 # Databricks Unity Catalog メタデータ抽出ツール
 
-Unity Catalogから既存テーブルのメタデータを抽出・出力します。
+DatabricksのUnity Catalogから既存テーブルのメタデータを抽出・出力します。
 テーブル一覧、カラム一覧、テーブルごとのサイズなど管理目的で利用できると思います。
 
 ## 主な機能
