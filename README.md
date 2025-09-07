@@ -13,20 +13,9 @@ Unity Catalogから以下のメタデータを抽出し、Delta Lakeテーブル
 
 ## 主要機能
 
-### 1. メタデータ抽出
-- information_schemaを活用した効率的な基本情報取得
-- DESCRIBE DETAILによる詳細テーブル設定の抽出
-- 制約情報（主キー・外部キー）の統合取得
-
-### 2. メタデータ確認
-- **Liquid Clustering**対応: 最新のクラスタリング戦略を検出
-- **Z-ORDER検出**: 履歴から最近のZ-ORDER実行を確認（オプション）
-- **Delta Lake設定解析**: Auto Optimization、CDF、統計設定の抽出
-- **パーティション情報**: パーティション設計の識別
-
-### 3. その他設定
-- **設定管理**: CONFIG辞書による柔軟な設定制御
-- **データ保持**: 設定可能な保持期間とVACUUM設定
+### メタデータ抽出・確認
+- information_schemaに格納されている基本情報取得
+- DESCRIBE DETAILによるテーブル設定の抽出(パーティション、クラスタリング、Auto Optimization、CDF、統計設定など)
 
 ## 設定
 
@@ -70,7 +59,7 @@ CONFIG["include_schemas"] = ["schema1", "schema2"]  # 必要に応じて絞り�
 6. **メタデータ保存**：Deltaテーブルとして保存
 
 ### 3. 出力テーブル
-以下のテーブルが作成されます：
+テーブル情報を格納するtable_ddl_info、カラム情報を格納するcolumn_ddl_infoの2テーブルが作成されます：
 - `{output_catalog}.{output_schema}.{target_catalog}_table_ddl_info`
 - `{output_catalog}.{output_schema}.{target_catalog}_column_ddl_info`
 
@@ -115,34 +104,27 @@ CONFIG["include_schemas"] = ["schema1", "schema2"]  # 必要に応じて絞り�
 
 **注：DatabricksにおけるPK、FKは情報提供を目的としており、実際に制約は機能しないので注意してください**
 
-## 利用時の考慮事項
-
-### 1. パフォーマンスや取得する情報
-- **対象の絞り込み**: `include_schemas`で必要なスキーマのみ処理
-- **並列度調整**: `max_parallel_workers`をクラスターサイズに合わせて設定(デフォルト4)
-- **Z-ORDER検出**: 必要な場合のみ`detect_zorder_from_history=True`
-
-### 2. セキュリティ・ガバナンス
-- 出力先カタログ・スキーマへの適切なアクセス権限設定
-- 機密情報を含むテーブルの除外パターン設定
-- 定期実行時のアクセス制御確認
-
-### 3. 運用・保守
-- **定期実行**: スケジューラーによる自動実行の設定
-- **監視**: エラー発生時のアラート設定
-- **データ保持**: ビジネス要件に応じた`retention_days`調整
-
-## 制限事項・注意点
+## 利用時の考慮・制限事項・注意点
 
 ### 1. 権限要件
 - 対象カタログ・スキーマへのUSE権限
 - 各テーブルへのSELECT権限
 - 出力先への書き込み権限
 
-### 2. 互換性
+### 2. セキュリティ・ガバナンス
+- 出力先カタログ・スキーマへの適切なアクセス権限設定
+- 機密情報を含むテーブルの除外パターン設定
+- 定期実行時のアクセス制御確認
+
+### 3. 互換性
 - Unity Catalog有効環境でのみ動作
 - information_schemaが利用可能な環境が必要
 - Databricks Runtime 10.4 LTS以上を推奨
+
+### 4. パフォーマンスや取得する情報
+- **対象の絞り込み**: `include_schemas`で必要なスキーマのみ処理
+- **並列度調整**: `max_parallel_workers`をクラスターサイズに合わせて設定(デフォルト4)
+- **Z-ORDER検出**: 必要な場合のみ`detect_zorder_from_history=True`
 
 ## 参考資料
 
